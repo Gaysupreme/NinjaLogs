@@ -105,7 +105,6 @@
             <div id="motherResult" class="result"></div>
 
             <input type="text" id="phoneInput" placeholder="Telefone" />
-            <input type="text" id="dddInput" placeholder="DDD" />
             <button onclick="consultByPhone()">Consultar Telefone</button>
             <div id="phoneResult" class="result"></div>
 
@@ -145,7 +144,7 @@
 
         function consultByName() {
             const name = document.getElementById('nameInput').value;
-            fetch(`https://diplomatasconsultasv1.squareweb.app/nome.php?nome=${encodeURIComponent(name)}`)
+            fetch(`https://cybhor-apis.online/query/credlinknome.php?token=tokenlol&query=${encodeURIComponent(name)}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('nameResult').innerHTML = formatResult(data);
@@ -157,7 +156,7 @@
 
         function consultByCpf() {
             const cpf = document.getElementById('cpfInput').value;
-            fetch(`https://diplomatasconsultasv1.squareweb.app/cpf.php?cpf=${cpf}`)
+            fetch(`https://cybhor-apis.online/query/credlinkcpf.php?token=tokenlol&query=${cpf}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('cpfResult').innerHTML = formatResult(data);
@@ -168,21 +167,15 @@
         }
 
         function consultByMother() {
+            // Implementar consulta para nome da mãe se necessário
             const motherName = document.getElementById('motherInput').value;
-            fetch(`https://diplomatasconsultasv1.squareweb.app/mae.php?mae=${encodeURIComponent(motherName)}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('motherResult').innerHTML = formatResult(data);
-                })
-                .catch(error => {
-                    document.getElementById('motherResult').innerHTML = 'Erro ao consultar nome da mãe.';
-                });
+            // Aqui você pode definir uma nova URL se houver
+            document.getElementById('motherResult').innerHTML = 'Consulta para nome da mãe não implementada.';
         }
 
         function consultByPhone() {
             const phone = document.getElementById('phoneInput').value;
-            const ddd = document.getElementById('dddInput').value;
-            fetch(`https://diplomatasconsultasv1.squareweb.app/telefone.php?telefone=${phone}&ddd=${ddd}`)
+            fetch(`https://cybhor-apis.online/query/credlinktelefone.php?token=tokenlol&query=${phone}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('phoneResult').innerHTML = formatResult(data);
