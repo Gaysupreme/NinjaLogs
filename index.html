@@ -23,6 +23,12 @@
             border-radius: 10px;
             width: 80%;
             max-width: 600px;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         h1 {
             font-size: 2.5em;
@@ -44,10 +50,31 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
         }
         .menu, .resources {
-            display: none; /* Oculta o menu inicialmente */
+            display: none;
             margin-top: 20px;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        pre {
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        .result {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: left;
         }
     </style>
 </head>
@@ -64,10 +91,23 @@
 
         <div class="menu" id="menu">
             <h2>Menu</h2>
-            <input type="text" id="urlInput" placeholder="URL do site">
-            <button onclick="generateScript()">Gerar Script</button>
-            <button onclick="fetchLogins()">Buscar Logins</button>
-            <pre id="output"></pre>
+            <h2>Consultar Dados</h2>
+            <input type="text" id="nameInput" placeholder="Nome" />
+            <button onclick="consultByName()">Consultar Nome</button>
+            <div id="nameResult" class="result"></div>
+
+            <input type="text" id="cpfInput" placeholder="CPF" />
+            <button onclick="consultByCpf()">Consultar CPF</button>
+            <div id="cpfResult" class="result"></div>
+
+            <input type="text" id="motherInput" placeholder="Nome da Mãe" />
+            <button onclick="consultByMother()">Consultar Mãe</button>
+            <div id="motherResult" class="result"></div>
+
+            <input type="text" id="phoneInput" placeholder="Telefone" />
+            <input type="text" id="dddInput" placeholder="DDD" />
+            <button onclick="consultByPhone()">Consultar Telefone</button>
+            <div id="phoneResult" class="result"></div>
 
             <h2>Gerador de Bot</h2>
             <select id="botFunctionality">
@@ -97,25 +137,66 @@
             if (username && password) {
                 document.getElementById('loginForm').style.display = 'none';
                 document.getElementById('menu').style.display = 'block';
-                document.getElementById('resources').style.display = 'block'; // Exibe a seção de recursos
+                document.getElementById('resources').style.display = 'block';
+                document.getElementById('menu').style.opacity = 1;
+                document.getElementById('resources').style.opacity = 1;
             }
         }
 
-        function generateScript() {
-            const url = document.getElementById('urlInput').value;
-            const script = `// Script para buscar logins em ${url}
-fetch('${url}/login')
-    .then(response => response.text())
-    .then(data => {
-        console.log(data);
-    })
-    .catch(error => console.error('Erro:', error));`;
-            document.getElementById('output').textContent = script;
+        function consultByName() {
+            const name = document.getElementById('nameInput').value;
+            fetch(`https://diplomatasconsultasv1.squareweb.app/nome.php?nome=${encodeURIComponent(name)}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('nameResult').innerHTML = formatResult(data);
+                })
+                .catch(error => {
+                    document.getElementById('nameResult').innerHTML = 'Erro ao consultar nome.';
+                });
         }
 
-        function fetchLogins() {
-            const url = document.getElementById('urlInput').value;
-            alert(`Buscando logins da URL: ${url}`);
+        function consultByCpf() {
+            const cpf = document.getElementById('cpfInput').value;
+            fetch(`https://diplomatasconsultasv1.squareweb.app/cpf.php?cpf=${cpf}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('cpfResult').innerHTML = formatResult(data);
+                })
+                .catch(error => {
+                    document.getElementById('cpfResult').innerHTML = 'Erro ao consultar CPF.';
+                });
+        }
+
+        function consultByMother() {
+            const motherName = document.getElementById('motherInput').value;
+            fetch(`https://diplomatasconsultasv1.squareweb.app/mae.php?mae=${encodeURIComponent(motherName)}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('motherResult').innerHTML = formatResult(data);
+                })
+                .catch(error => {
+                    document.getElementById('motherResult').innerHTML = 'Erro ao consultar nome da mãe.';
+                });
+        }
+
+        function consultByPhone() {
+            const phone = document.getElementById('phoneInput').value;
+            const ddd = document.getElementById('dddInput').value;
+            fetch(`https://diplomatasconsultasv1.squareweb.app/telefone.php?telefone=${phone}&ddd=${ddd}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('phoneResult').innerHTML = formatResult(data);
+                })
+                .catch(error => {
+                    document.getElementById('phoneResult').innerHTML = 'Erro ao consultar telefone.';
+                });
+        }
+
+        function formatResult(data) {
+            if (data.error) {
+                return `<strong>Erro:</strong> ${data.error}`;
+            }
+            return `<pre>${JSON.stringify(data, null, 2)}</pre>`;
         }
 
         function generateBotCode() {
@@ -129,7 +210,7 @@ bot.on('message', (msg) => {
 });`;
             } else if (functionality === 'inline') {
                 botCode = `// Exemplo de Comando Inline
-bot.onText(/\/inline/, (msg) => {
+bot.onText(/\\/inline/, (msg) => {
     bot.sendMessage(msg.chat.id, 'Clique no botão abaixo:', {
         reply_markup: {
             inline_keyboard: [[{ text: 'Clique Aqui', callback_data: 'clicked' }]]
