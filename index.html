@@ -116,6 +116,14 @@
             </select>
             <button onclick="generateBotCode()">Gerar Código do Bot</button>
             <pre id="botOutput"></pre>
+
+            <h2>Versículo da Bíblia</h2>
+            <button onclick="generateVerse()">Gerar Versículo</button>
+            <div id="verseResult" class="result"></div>
+
+            <h2>Mensagem Motivacional</h2>
+            <button onclick="generateMotivationalMessage()">Gerar Mensagem</button>
+            <div id="motivationalResult" class="result"></div>
         </div>
 
         <div class="resources" id="resources">
@@ -133,13 +141,39 @@
             const username = event.target.username.value;
             const password = event.target.password.value;
 
-            if (username && password) {
+            if (username === "admin" && password === "admin123") {
                 document.getElementById('loginForm').style.display = 'none';
                 document.getElementById('menu').style.display = 'block';
                 document.getElementById('resources').style.display = 'block';
                 document.getElementById('menu').style.opacity = 1;
                 document.getElementById('resources').style.opacity = 1;
+            } else {
+                alert("Usuário ou senha incorretos.");
             }
+        }
+
+        function generateVerse() {
+            const verses = [
+                "Filipenses 4:13 - Posso todas as coisas naquele que me fortalece.",
+                "Salmos 23:1 - O Senhor é o meu pastor, nada me faltará.",
+                "Romanos 8:28 - Todas as coisas cooperam para o bem daqueles que amam a Deus.",
+                "Isaías 41:10 - Não temas, pois eu sou contigo; não te assombres, pois eu sou teu Deus.",
+                "Salmos 46:1 - Deus é o nosso refúgio e a nossa fortaleza, socorro bem presente na angústia."
+            ];
+            const randomVerse = verses[Math.floor(Math.random() * verses.length)];
+            document.getElementById('verseResult').innerHTML = randomVerse;
+        }
+
+        function generateMotivationalMessage() {
+            const messages = [
+                "Acredite em você e em suas capacidades!",
+                "Cada dia é uma nova oportunidade para mudar sua vida.",
+                "O sucesso é a soma de pequenos esforços repetidos dia após dia.",
+                "Não desista. Grandes coisas levam tempo.",
+                "Você é capaz de alcançar tudo o que deseja!"
+            ];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            document.getElementById('motivationalResult').innerHTML = randomMessage;
         }
 
         function consultByName() {
@@ -167,9 +201,7 @@
         }
 
         function consultByMother() {
-            // Implementar consulta para nome da mãe se necessário
             const motherName = document.getElementById('motherInput').value;
-            // Aqui você pode definir uma nova URL se houver
             document.getElementById('motherResult').innerHTML = 'Consulta para nome da mãe não implementada.';
         }
 
