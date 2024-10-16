@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ninja - Login</title>
+    <title>Ninja - Bot para Telegram</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,6 +13,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             height: 100vh;
             margin: 0;
         }
@@ -20,6 +21,8 @@
             background: rgba(40, 44, 52, 0.9);
             padding: 30px;
             border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
         }
         h1 {
             font-size: 2.5em;
@@ -27,10 +30,10 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        input {
+        input, select {
             padding: 10px;
             margin: 10px 0;
-            width: 80%;
+            width: 90%;
             border: none;
             border-radius: 5px;
         }
@@ -42,7 +45,7 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        .menu {
+        .menu, .resources {
             display: none; /* Oculta o menu inicialmente */
             margin-top: 20px;
         }
@@ -65,21 +68,36 @@
             <button onclick="generateScript()">Gerar Script</button>
             <button onclick="fetchLogins()">Buscar Logins</button>
             <pre id="output"></pre>
+
+            <h2>Gerador de Bot</h2>
+            <select id="botFunctionality">
+                <option value="">Escolha uma funcionalidade</option>
+                <option value="echo">Resposta Automática</option>
+                <option value="inline">Comandos Inline</option>
+            </select>
+            <button onclick="generateBotCode()">Gerar Código do Bot</button>
+            <pre id="botOutput"></pre>
+        </div>
+
+        <div class="resources" id="resources">
+            <h2>Recursos Úteis</h2>
+            <ul>
+                <li><a href="https://core.telegram.org/bots/api" target="_blank" style="color: #4CAF50;">Documentação da API do Telegram</a></li>
+                <li><a href="https://github.com/telegram-bot-sdk/telegram-bot-sdk" target="_blank" style="color: #4CAF50;">Telegram Bot SDK</a></li>
+            </ul>
         </div>
     </div>
 
     <script>
         function handleLogin(event) {
-            event.preventDefault(); // Impede o envio do formulário
-
-            // Aqui você pode adicionar sua lógica de validação de login
+            event.preventDefault();
             const username = event.target.username.value;
             const password = event.target.password.value;
 
-            // Exemplo simples de validação (substitua com sua lógica real)
             if (username && password) {
-                document.getElementById('loginForm').style.display = 'none'; // Oculta o formulário de login
-                document.getElementById('menu').style.display = 'block'; // Mostra o menu
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('menu').style.display = 'block';
+                document.getElementById('resources').style.display = 'block'; // Exibe a seção de recursos
             }
         }
 
@@ -90,17 +108,37 @@ fetch('${url}/login')
     .then(response => response.text())
     .then(data => {
         console.log(data);
-        // Processar dados do login
     })
     .catch(error => console.error('Erro:', error));`;
-
-            document.getElementById('output').textContent = script; // Mostra o script gerado
+            document.getElementById('output').textContent = script;
         }
 
         function fetchLogins() {
             const url = document.getElementById('urlInput').value;
             alert(`Buscando logins da URL: ${url}`);
-            // Implementar lógica para buscar logins
+        }
+
+        function generateBotCode() {
+            const functionality = document.getElementById('botFunctionality').value;
+            let botCode = '';
+
+            if (functionality === 'echo') {
+                botCode = `// Exemplo de Bot Echo
+bot.on('message', (msg) => {
+    bot.sendMessage(msg.chat.id, msg.text);
+});`;
+            } else if (functionality === 'inline') {
+                botCode = `// Exemplo de Comando Inline
+bot.onText(/\/inline/, (msg) => {
+    bot.sendMessage(msg.chat.id, 'Clique no botão abaixo:', {
+        reply_markup: {
+            inline_keyboard: [[{ text: 'Clique Aqui', callback_data: 'clicked' }]]
+        }
+    });
+});`;
+            }
+
+            document.getElementById('botOutput').textContent = botCode;
         }
     </script>
 </body>
