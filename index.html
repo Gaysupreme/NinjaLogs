@@ -42,16 +42,66 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .menu {
+            display: none; /* Oculta o menu inicialmente */
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Ninja</h1>
-        <form method="POST" action="">
-            <input type="text" name="username" placeholder="Usuário" required>
-            <input type="password" name="password" placeholder="Senha" required>
-            <button type="submit">Entrar</button>
-        </form>
+        <div id="loginForm">
+            <form onsubmit="handleLogin(event)">
+                <input type="text" name="username" placeholder="Usuário" required>
+                <input type="password" name="password" placeholder="Senha" required>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+
+        <div class="menu" id="menu">
+            <h2>Menu</h2>
+            <input type="text" id="urlInput" placeholder="URL do site">
+            <button onclick="generateScript()">Gerar Script</button>
+            <button onclick="fetchLogins()">Buscar Logins</button>
+            <pre id="output"></pre>
+        </div>
     </div>
+
+    <script>
+        function handleLogin(event) {
+            event.preventDefault(); // Impede o envio do formulário
+
+            // Aqui você pode adicionar sua lógica de validação de login
+            const username = event.target.username.value;
+            const password = event.target.password.value;
+
+            // Exemplo simples de validação (substitua com sua lógica real)
+            if (username && password) {
+                document.getElementById('loginForm').style.display = 'none'; // Oculta o formulário de login
+                document.getElementById('menu').style.display = 'block'; // Mostra o menu
+            }
+        }
+
+        function generateScript() {
+            const url = document.getElementById('urlInput').value;
+            const script = `// Script para buscar logins em ${url}
+fetch('${url}/login')
+    .then(response => response.text())
+    .then(data => {
+        console.log(data);
+        // Processar dados do login
+    })
+    .catch(error => console.error('Erro:', error));`;
+
+            document.getElementById('output').textContent = script; // Mostra o script gerado
+        }
+
+        function fetchLogins() {
+            const url = document.getElementById('urlInput').value;
+            alert(`Buscando logins da URL: ${url}`);
+            // Implementar lógica para buscar logins
+        }
+    </script>
 </body>
 </html>
